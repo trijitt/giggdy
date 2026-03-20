@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Rai ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Quicksand', sans-serif;
+  background: linear-gradient(135deg, #ffd6e0, #e7c6ff, #cdb4db);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* floating hearts */
+.heart {
+  position: absolute;
+  animation: float 6s linear infinite;
+  opacity: 0.5;
+}
+@keyframes float {
+  from { transform: translateY(100vh); }
+  to { transform: translateY(-10vh); }
+}
+
+/* main card */
+.card {
+  width: 420px;
+  min-height: 320px;
+  padding: 30px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* pages */
+.page {
+  display: none;
+  animation: fade 0.6s ease;
+}
+.active { display: block; }
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(10px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+/* text */
+h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 24px;
+  color: #5a3d5c;
+}
+
+/* buttons */
+button {
+  border: none;
+  padding: 12px 22px;
+  margin: 10px;
+  border-radius: 25px;
+  background: #ff8fab;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  transform: scale(1.08);
+  background: #ff4d6d;
+}
+
+/* NO button */
+#noBtn {
+  position: absolute;
+}
+
+/* bottom button */
+.bottom-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background: #6a4c93;
+}
+
+/* video */
+.video-wrapper {
+  margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- music -->
+<audio id="bgMusic" loop>
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- floating hearts -->
+<script>
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤️";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (Math.random() * 18 + 10) + "px";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 6000);
+}, 400);
+</script>
+
+<div class="card">
+
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+<h1>
+Will you be my forever love and let me love you and care for you and call you mine for the rest of eternity? 💖
+</h1>
+<button onclick="go('page2')">Yes 💘</button>
+<button id="noBtn" onclick="go('pageNo')">No 💔</button>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="page">
+<h1>
+And that is why you are perfect, Rai 💕 because you chose me and let me choose you ✨
+</h1>
+<button class="bottom-btn" onclick="go('page3')">
+I want to tell you something…
+</button>
+</div>
+
+<!-- PAGE 3 -->
+<div id="page3" class="page">
+<h1>For you ❤️</h1>
+<div class="video-wrapper">
+  <iframe width="320" height="180"
+    src="https://www.youtube.com/embed/2Vv-BfVoq4g"
+    frameborder="0"
+    allow="accelerometer; autoplay; encrypted-media"
+    allowfullscreen>
+  </iframe>
+</div>
+<p>🎶 Our song is playing just for you</p>
+</div>
+
+<!-- NO PAGE -->
+<div id="pageNo" class="page">
+<h1>
+again, since i am the biggest despo for you, please say yes? 🥺
+</h1>
+<button onclick="go('page1')">"sure"</button>
+</div>
+
+</div>
+
+<script>
+// music
+document.addEventListener("click", () => {
+  const m = document.getElementById("bgMusic");
+  m.volume = 0.5;
+  m.play().catch(()=>{});
+}, { once: true });
+
+// navigation
+function go(p){
+  document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+  history.pushState({page:p},"","#"+p);
+}
+
+window.onpopstate = (e)=>{
+  const p = e.state?.page || "page1";
+  document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+};
+
+// smooth NO button inside card
+const noBtn = document.getElementById("noBtn");
+const card = document.querySelector(".card");
+
+let lastX=0,lastY=0;
+
+document.addEventListener("mousemove",(e)=>{
+  const speed = Math.hypot(e.clientX-lastX,e.clientY-lastY);
+  lastX=e.clientX; lastY=e.clientY;
+
+  const rect = noBtn.getBoundingClientRect();
+  const cardRect = card.getBoundingClientRect();
+
+  const dx = e.clientX - (rect.left + rect.width/2);
+  const dy = e.clientY - (rect.top + rect.height/2);
+  const dist = Math.hypot(dx,dy);
+
+  const radius = 100;
+
+  if(dist < radius){
+    const angle = Math.atan2(dy,dx);
+    const force = Math.min(120, speed*1.8);
+
+    let newX = rect.left - Math.cos(angle)*force - cardRect.left;
+    let newY = rect.top - Math.sin(angle)*force - cardRect.top;
+
+    // keep inside card
+    newX = Math.max(0, Math.min(card.clientWidth - rect.width, newX));
+    newY = Math.max(0, Math.min(card.clientHeight - rect.height, newY));
+
+    noBtn.style.left = newX + "px";
+    noBtn.style.top = newY + "px";
+  }
+});
+</script>
+
+</body>
+</html>
