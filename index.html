@@ -12,10 +12,17 @@ body {
   font-family: 'Quicksand', sans-serif;
   background: linear-gradient(135deg, #ffd6e0, #e7c6ff, #cdb4db);
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
+  text-align: center;
+  color: #5a3d5c;
+}
+
+/* center content */
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* floating hearts */
@@ -29,49 +36,31 @@ body {
   to { transform: translateY(-10vh); }
 }
 
-/* main card */
-.card {
-  width: 420px;
-  min-height: 320px;
-  padding: 30px;
-  border-radius: 25px;
-  background: rgba(255,255,255,0.25);
-  backdrop-filter: blur(15px);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
 /* pages */
 .page {
   display: none;
-  animation: fade 0.6s ease;
+  width: 100%;
+  height: 100%;
 }
 .active { display: block; }
-
-@keyframes fade {
-  from { opacity: 0; transform: translateY(10px);}
-  to { opacity: 1; transform: translateY(0);}
-}
 
 /* text */
 h1 {
   font-family: 'Pacifico', cursive;
-  font-size: 24px;
-  color: #5a3d5c;
+  font-size: 30px;
+  padding: 20px;
 }
 
 /* buttons */
 button {
   border: none;
-  padding: 12px 22px;
+  padding: 14px 26px;
   margin: 10px;
-  border-radius: 25px;
+  border-radius: 30px;
   background: #ff8fab;
   color: white;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: 0.25s;
 }
 
 button:hover {
@@ -79,7 +68,6 @@ button:hover {
   background: #ff4d6d;
 }
 
-/* NO button */
 #noBtn {
   position: absolute;
 }
@@ -87,14 +75,16 @@ button:hover {
 /* bottom button */
 .bottom-btn {
   position: absolute;
-  bottom: 15px;
-  right: 15px;
+  bottom: 30px;
+  right: 30px;
   background: #6a4c93;
 }
 
-/* video */
-.video-wrapper {
-  margin-top: 15px;
+/* big video */
+.video-full {
+  width: 75vw;
+  height: 75vh;
+  border-radius: 15px;
 }
 </style>
 </head>
@@ -119,53 +109,53 @@ setInterval(() => {
 }, 400);
 </script>
 
-<div class="card">
-
 <!-- PAGE 1 -->
 <div id="page1" class="page active">
-<h1>
-Will you be my forever love and let me love you and care for you and call you mine for the rest of eternity? 💖
-</h1>
-<button onclick="go('page2')">Yes 💘</button>
-<button id="noBtn" onclick="go('pageNo')">No 💔</button>
+  <div class="center">
+    <h1>
+      Will you be my forever love and let me love you and care for you and call you mine for the rest of eternity? 💖
+    </h1>
+    <button onclick="go('page2')">Yes 💘</button>
+    <button id="noBtn" onclick="go('pageNo')">No 💔</button>
+  </div>
 </div>
 
 <!-- PAGE 2 -->
 <div id="page2" class="page">
-<h1>
-And that is why you are perfect, Rai 💕 because you chose me and let me choose you ✨
-</h1>
-<button class="bottom-btn" onclick="go('page3')">
-I want to tell you something…
-</button>
+  <div class="center">
+    <h1>
+      And that is why you are perfect, Rai 💕 because you chose me and let me choose you ✨
+    </h1>
+  </div>
+  <button class="bottom-btn" onclick="go('page3')">
+    I want to tell you something…
+  </button>
 </div>
 
 <!-- PAGE 3 -->
 <div id="page3" class="page">
-<h1>For you ❤️</h1>
-<div class="video-wrapper">
-  <iframe width="320" height="180"
-    src="https://www.youtube.com/embed/2Vv-BfVoq4g"
-    frameborder="0"
-    allow="accelerometer; autoplay; encrypted-media"
-    allowfullscreen>
-  </iframe>
-</div>
-<p>🎶 Our song is playing just for you</p>
+  <div class="center">
+    <iframe class="video-full"
+      src="https://www.youtube.com/embed/2Vv-BfVoq4g"
+      frameborder="0"
+      allow="accelerometer; autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
 </div>
 
 <!-- NO PAGE -->
 <div id="pageNo" class="page">
-<h1>
-again, since i am the biggest despo for you, please say yes? 🥺
-</h1>
-<button onclick="go('page1')">"sure"</button>
-</div>
-
+  <div class="center">
+    <h1>
+      again, since i am the biggest despo for you, please say yes? 🥺
+    </h1>
+    <button onclick="go('page1')">"sure"</button>
+  </div>
 </div>
 
 <script>
-// music
+// music start
 document.addEventListener("click", () => {
   const m = document.getElementById("bgMusic");
   m.volume = 0.5;
@@ -174,20 +164,25 @@ document.addEventListener("click", () => {
 
 // navigation
 function go(p){
+  // stop music on final page
+  if(p === "page3"){
+    document.getElementById("bgMusic").pause();
+  }
+
   document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
   document.getElementById(p).classList.add("active");
   history.pushState({page:p},"","#"+p);
 }
 
+// browser nav
 window.onpopstate = (e)=>{
   const p = e.state?.page || "page1";
   document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
   document.getElementById(p).classList.add("active");
 };
 
-// smooth NO button inside card
+// ultra smooth NO button (full screen)
 const noBtn = document.getElementById("noBtn");
-const card = document.querySelector(".card");
 
 let lastX=0,lastY=0;
 
@@ -196,24 +191,25 @@ document.addEventListener("mousemove",(e)=>{
   lastX=e.clientX; lastY=e.clientY;
 
   const rect = noBtn.getBoundingClientRect();
-  const cardRect = card.getBoundingClientRect();
 
   const dx = e.clientX - (rect.left + rect.width/2);
   const dy = e.clientY - (rect.top + rect.height/2);
   const dist = Math.hypot(dx,dy);
 
-  const radius = 100;
+  const radius = 140;
 
   if(dist < radius){
     const angle = Math.atan2(dy,dx);
-    const force = Math.min(120, speed*1.8);
 
-    let newX = rect.left - Math.cos(angle)*force - cardRect.left;
-    let newY = rect.top - Math.sin(angle)*force - cardRect.top;
+    // faster than cursor
+    const force = Math.min(200, speed*2.5);
 
-    // keep inside card
-    newX = Math.max(0, Math.min(card.clientWidth - rect.width, newX));
-    newY = Math.max(0, Math.min(card.clientHeight - rect.height, newY));
+    let newX = rect.left - Math.cos(angle)*force;
+    let newY = rect.top - Math.sin(angle)*force;
+
+    // keep inside screen
+    newX = Math.max(0, Math.min(window.innerWidth - rect.width, newX));
+    newY = Math.max(0, Math.min(window.innerHeight - rect.height, newY));
 
     noBtn.style.left = newX + "px";
     noBtn.style.top = newY + "px";
